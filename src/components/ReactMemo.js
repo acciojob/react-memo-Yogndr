@@ -1,46 +1,44 @@
-import React, { useState, useCallback } from "react";
+import React, { useState } from "react";
 
-// Skill list (memoized to avoid re-renders when props don't change)
-const SkillList = React.memo(({ skills, handleAddSkill }) => {
+const SkillList = React.memo(({ skills }) => {
+  console.log("SkillList rendered");
   return (
-    <div>
-      <input
-        id="skill-input"
-        type="text"
-        value={skills.input}
-        onChange={(e) => skills.setInput(e.target.value)}
-      />
-      <button id="skill-add-btn" onClick={handleAddSkill}>
-        Add Skill
-      </button>
-      <ul>
-        {skills.list.map((skill, idx) => (
-          <li key={idx}>{skill}</li>
-        ))}
-      </ul>
-    </div>
+    <ul>
+      {skills.map((skill, index) => (
+        <li key={index}>{skill}</li>
+      ))}
+    </ul>
   );
 });
 
-const ReactMemoComp = () => {
+const ReactMemoComponent = () => {
+  const [skills, setSkills] = useState(["HTML", "CSS"]);
   const [input, setInput] = useState("");
-  const [list, setList] = useState(["HTML", "CSS", "JavaScript", "React"]);
 
-  // useCallback: prevents re-creation of handleAddSkill on each render
-  const handleAddSkill = useCallback(() => {
-    const trimmed = input.trim();
-    if (trimmed && !list.includes(trimmed)) {
-      setList((prev) => [...prev, trimmed]);
+  const addSkill = () => {
+    if (input.trim().length > 5) {
+      setSkills((prev) => [...prev, input]);
       setInput("");
+    } else {
+      alert("Task must be more than 5 characters!");
     }
-  }, [input, list]);
+  };
 
   return (
-    <div>
-      <h2>React.memo</h2>
-      <SkillList skills={{ list, input, setInput }} handleAddSkill={handleAddSkill} />
+    <div style={{ margin: "40px auto", width: "300px", border: "1px solid gray", padding: "20px", borderRadius: "10px" }}>
+      <h2>React.memo Example</h2>
+
+      <input
+        type="text"
+        placeholder="Enter new skill"
+        value={input}
+        onChange={(e) => setInput(e.target.value)}
+      />
+      <button onClick={addSkill}>Add Skill</button>
+
+      <SkillList skills={skills} />
     </div>
   );
 };
 
-export default ReactMemoComp;
+export default ReactMemoComponent;
